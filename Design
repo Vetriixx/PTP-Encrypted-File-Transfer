@@ -1,0 +1,278 @@
+TO DO:
+----------------------------------------------------------------------
+- get default settings for the server from config
+- re-do the server and client code to look more "mine"
+- download / upload
+- send file list to server to hold onto??
+- create a signal handler
+     SIGQUIT
+     SIGTERM
+     SIGHUP
+     SIGKILL
+- cool little load screen for transferring file
+- design
+- DONE
+
+
+Start program
+- fork off the program so it is just the logger
+
+- Logger
+    - Log anything and everything
+    - Log if a fly farts and a dog buprs
+
+- Program
+    pthread:
+        - Client - PARENT
+            - menu
+                - download a file
+                    - loading screen
+                        http://stackoverflow.com/questions/14539867/how-to-display-a-progress-indicator-in-pure-c-c-cout-printf
+
+        - Server - CHILD
+            - Find out if the port is free
+                 - If it is then bind to that port
+                 - If NOT then find a new port / give the user an option to find a new one or QUIT
+
+            - Ask for sharing list
+            - Send sharing list to friendslist
+            - wait for signals
+                - get signal to transfer
+                - find out what file to transfer
+                - find out how big the file is
+                - start transfering
+                - complete transfer
+                - go back to wait for signals
+
+
+
+
+
+
+SETTINGS.CONF
+
+RUN Logger
+
+confirm if settings.conf exists
+    IF settings.conf DOES exist
+        IF settings.conf is READABLE
+            print contents to screen
+        ELSE
+            settings.conf is deleted and recreated with default settings
+        END IF
+    ELSE settings.conf DOES NOT exist
+        create settings.conf file with default variables
+        print variables on startup
+    END IF
+
+RUN Logger
+
+------------------------------------------------------------------------
+START MENU
+OUTPUT menu_options
+[1] - view sharinglist
+[2] - Add file to sharinglist
+[3] - Remove file from sharinglist
+[4] - print contents of file to screen
+[5] - exit program
+
+Get menu_choice from usr
+*system("clear");
+
+IF menu_Choice == 1
+    RUN view_sharingList
+
+ELSE IF menu_choice ==2
+    RUN add_Menu
+        [1] - Add an individual file
+        [2] - Add all files in a directory
+
+        IF add_menu ==1
+            RUN addFile function
+
+        ELSE IF add_menu ==2
+            RUN addFile_dir function
+
+ELSE IF menu_choice ==3
+    RUN Remove_Menu
+            [1] - Remove an individual file
+            [2] - Remove all files in a directory
+
+            IF add_menu ==1
+                RUN remFile function
+
+            ELSE IF add_menu ==2
+                RUN remFile_dir function
+
+ELSE IF menu_choice ==4
+    RUN sharelist function
+
+ELSE IF menu_choice ==5
+    OUTPUT "Exiting....."
+    exit program
+
+ELSE
+    OUTPUT "Invalid try again"
+END IF
+-------------------------------------------------------------------------
+CREATE SHARING LIST FUNCTIONS
+
+RUN Logger
+
+IF ./sharinglist.txt is exists and is readable
+    OPEN file in read mode
+    OUTPUT reading contents..
+    RUN logger
+ELSE
+    CREATE and OPEN sharinglist
+    PUT headers [filepath] [filename] [permission] into file
+    OUTPUT sharelist created
+    RUN LOGGER
+
+END IF
+    CLOSE files
+
+-------------------------------------------------------------------------
+ADD FILE FUNCTIONS
+
+
+ADD FILE INDIVIDUALLY
+RUN Logger
+
+IF sharinglist.txt exists
+
+    RUN read function
+
+ELSE create sharinglist.txt
+END IF
+get INPUT from usr "please enter the direct filepath of the file you wish to add to the list"
+    INPUT "please enter 1 if you want to share with 1 person, or 2, to share with everyone"
+USE INPUT to check to see if the file exist
+    IF INPUT_FILE does exist
+        put variables into sharinglist.txt
+        OUTPUT "added successfully"
+    ELSE IF INPUT_FILE does NOT exist
+        OUTPUT "file does not exist, please try again"
+    END IF
+
+CLOSE sharinglist.txt
+RUN Logger
+
+----------------------------------------------------------------------------------------------------------
+ADD ALL FILE FROM DIRECTORY
+
+RUN Logger
+IF sharinglist.txt exists
+
+    RUN read function
+
+ELSE create sharinglist.txt
+END IF
+get INPUT from user for the filepath of the directory they want to add
+    ASK the DIR if it exists
+        IF INPUT does exist
+            INPUT "please enter 1 if you want to share with 1 person, or 2, to share with everyone"
+            put variables into sharinglist.txt
+            OUTPUT "added successfully"
+    ELSE IF INPUT_DIR does NOT exist
+        OUTPUT "filepath does not exist, please try again"
+    END IF
+RUN Logger
+
+
+-------------------------------------------------------------------
+REMOVE FILE FUNCTIONS:
+
+REMOVE FILE INDIVIDUALLY
+RUN Logger
+OPEN sharinglist file
+ADD line numbers to each line of the file UNTILL the end
+OUTPUT the whole file with the line numbers
+ASK for INPUT from the USER to select a INT that corresponds with the file they want to delete
+
+    IF input Equals the line number
+    COMPARE the input with the file
+    CREATE a temp file
+    PUT all information that is NOT what the user input I.E ignore the user input
+
+    ELSE
+        INVALID INPUT LOOP BACK TO BEGINING
+
+    END IF
+
+CLSOE both files
+REMOVE old sharing list
+RENAME tempfolder to sharinglist.txt
+RUN Logger
+
+------------------------------------------------------------------------------
+
+REMOVE ALL FILES FROM DIRECTORY
+
+RUN Logger
+OPEN sharinglist file
+
+
+OUTPUT the whole file with the filepath
+ASK for INPUT from the USER to select a filepath
+GET the length of the input filepath
+    CREATE a temp file
+
+    READ sharinglist line by line and put string into filepath
+    COMPARE the input given, its file length with the variable sharinglist is stored
+        IF the input pathsize, input filepath and the variable do NOT match
+             PUT all information that is NOT what the user input I.E ignore the user input into temp file
+
+         ELSE
+            INVALID INPUT LOOP BACK TO BEGINING
+    END IF
+
+CLSOE both files
+REMOVE old sharing list
+RENAME tempfolder to sharinglist.txt
+RUN Logger
+
+-----------------------------------------------------------------------------
+LOGGER FUNCTIONS:
+
+CREATE logger file.txt
+    PUT file heading "======LOGGER======"
+    CLOSE FILE
+
+OPEN logger in append mode
+    GET current time
+    CONVERT time into string
+    PUT time, and event message into the logfile
+    CLOSE log
+
+END FUNCTION
+
+--------------------------------------------------------------------------------
+READ FUNCTION
+
+OPEN FILE in read mode
+RUN LOGGER
+PUT file string into buffer variable with a space of 1024
+    IGNORE anything starting with a #
+    PRINT BUFFER
+CLOSE FILE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
